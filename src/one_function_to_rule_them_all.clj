@@ -43,7 +43,15 @@
   (reduce insert [] a-seq))
 
 (defn parity [a-seq]
-  [:-])
+  (let [freqs (frequencies a-seq)]
+    (let [all (loop [complete '() current a-seq]
+                (cond
+                  (empty? current)
+                  complete
+                  :else
+                  (let [now (if (odd? (get freqs (first current))) (cons (first current) complete) (cons nil complete))]
+                    (recur now (rest current)))))]
+  (reverse (filter (complement nil?) all)))))
 
 (defn minus [x]
   :-)
