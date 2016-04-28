@@ -1,28 +1,46 @@
 (ns one-function-to-rule-them-all)
 
 (defn concat-elements [a-seq]
-  :-)
+  (reduce concat '() a-seq))
 
 (defn str-cat [a-seq]
-  :-)
+  (if (empty? a-seq)
+    ""
+    (letfn [(space [x y] (str x " " y))]
+      (reduce space a-seq))))
 
 (defn my-interpose [x a-seq]
-  [:-])
+  (if (empty? a-seq)
+    '()
+    (letfn [(conjx [a b] (conj a b x))]
+      (drop 1 (reduce conjx '() (reverse a-seq))))))
 
 (defn my-count [a-seq]
-  :-)
+  (letfn [(counter [init _] (inc init))]
+  (reduce counter 0 a-seq)))
 
 (defn my-reverse [a-seq]
-  [:-])
+  (reduce conj '() a-seq))
 
 (defn min-max-element [a-seq]
-  [:-])
+  [(reduce min a-seq) (reduce max a-seq)])
 
 (defn insert [sorted-seq n]
-  [:-])
+  (let [result (loop [complete '() i sorted-seq check false]
+    (cond
+      (empty? sorted-seq)
+      (cons n complete)
+      (empty? i)
+      complete
+      :else
+      ;(let [now (if (< n (apply min i)) (cons n (cons (first i) complete)) (cons (first i) complete))]
+      (let [second (first (rest i))]
+        (let [now (if (and (> n (first i)) (< n second)) (cons (first i) (cons n complete)) (cons (first i) complete))]
+          (recur now (rest i) false)))))]
+    (reverse result)))
 
 (defn insertion-sort [a-seq]
-  [:-])
+  (reduce insert '() a-seq))
 
 (defn parity [a-seq]
   [:-])
