@@ -26,21 +26,21 @@
   [(reduce min a-seq) (reduce max a-seq)])
 
 (defn insert [sorted-seq n]
-  (let [result (loop [complete '() i sorted-seq check false]
+  (loop [complete '() i sorted-seq index 0 doublecheck false]
     (cond
       (empty? sorted-seq)
       (cons n complete)
-      (empty? i)
-      complete
+      (or (empty? i) doublecheck)
+      (if (not doublecheck) (concat (concat complete [n]) i) (concat complete i)) 
       :else
       ;(let [now (if (< n (apply min i)) (cons n (cons (first i) complete)) (cons (first i) complete))]
       (let [second (first (rest i))]
-        (let [now (if (and (> n (first i)) (< n second)) (cons (first i) (cons n complete)) (cons (first i) complete))]
-          (recur now (rest i) false)))))]
-    (reverse result)))
+        (let [check (and (< n (first i)))] ;(nth i index)
+	        (let [now (if check (concat (concat complete [n]) [(first i)]) (concat complete [(first i)]))]
+	          (recur now (rest i) (inc index) check)))))))
 
 (defn insertion-sort [a-seq]
-  (reduce insert '() a-seq))
+  (reduce insert [] a-seq))
 
 (defn parity [a-seq]
   [:-])
