@@ -51,19 +51,39 @@
                   :else
                   (let [now (if (odd? (get freqs (first current))) (cons (first current) complete) (cons nil complete))]
                     (recur now (rest current)))))]
-  (reverse (filter (complement nil?) all)))))
+  (into #{} (reverse (filter (complement nil?) all))))))
 
-(defn minus [x]
-  :-)
+(defn minus
+  ([x] (- x))
+  ([x y] (- x y)))
 
-(defn count-params [x]
-  :-)
+(defn count-params [& x]
+  (count x))
+  
+(defn my-*
+  ([] 1)
+  ([x] x)
+  ([x y] (* x y))
+  ([x y & more] (reduce my-* (my-* x y) more)))
 
-(defn my-* [x]
-  :-)
+(defn pred-and
+  ([] (fn [x] true))
+  ([p] (fn [x] (p x)))
+  ([p0 p1] (fn [x] (and (p0 x) (p1 x))))
+  ([p0 p1 & more] (reduce pred-and (pred-and p0 p1) more)))
 
-(defn pred-and [x]
-  (fn [x] :-))
-
-(defn my-map [f a-seq]
-  [:-])
+(defn my-map
+  ([f] (fn [x y] (my-map f x y)))
+  ([f a-seq] (loop [complete '() i a-seq]
+               (cond
+                 (empty? i)
+                 complete
+                 :else
+                 (recur (cons (f (first i)) complete ) (rest i)))))
+  ([f a-seq b-seq] (loop [complete '() i a-seq j b-seq]
+                     (cond
+                       (or (empty? i))
+                       complete
+                       :else
+                       (recur (cons (f (first i) (first j)) complete) (rest i) (rest j)))))
+  ([f a-seq b-seq & more] (reduce (my-map f) (my-map f a-seq b-seq) more)))
