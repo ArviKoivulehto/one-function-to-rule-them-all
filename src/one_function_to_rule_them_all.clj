@@ -85,4 +85,6 @@
         (some empty? init)
         '()
         :else
-        (cons (apply f (my-map first init)) (apply my-map f (my-map rest init)))))))
+        (let [now (apply f (my-map first init))]
+          (let [future (apply my-map f (my-map rest init))]
+        (cons now future)))))))
