@@ -73,17 +73,16 @@
   ([p0 p1 & more] (reduce pred-and (pred-and p0 p1) more)))
 
 (defn my-map
-  ([f] (fn [x y] (my-map f x y)))
-  ([f a-seq] (loop [complete '() i a-seq]
-               (cond
-                 (empty? i)
-                 complete
-                 :else
-                 (recur (cons (f (first i)) complete ) (rest i)))))
-  ([f a-seq b-seq] (loop [complete '() i a-seq j b-seq]
-                     (cond
-                       (or (empty? i))
-                       complete
-                       :else
-                       (recur (cons (f (first i) (first j)) complete) (rest i) (rest j)))))
-  ([f a-seq b-seq & more] (reduce (my-map f) (my-map f a-seq b-seq) more)))
+  ([f] (fn [x y] (concat (my-map f x y))))
+  ([f a-seq] (cond
+               (empty? a-seq)
+               '()
+               :else
+               (cons (f (first a-seq)) (my-map f (rest a-seq)))))
+  ([f a-seq & more] 
+    (let [init (cons a-seq more)]
+      (cond
+        (some empty? init)
+        '()
+        :else
+        (cons (apply f (my-map first init)) (apply my-map f (my-map rest init)))))))
